@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
 import 'globals.dart' as glob;
@@ -36,6 +34,7 @@ class _ProjectListState extends State<ProjectList> {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(182, 169, 162, 1),
       body: Stack(children: [
+        Container(),
         projectsList.isNotEmpty
             ? Container(
                 margin: EdgeInsets.only(

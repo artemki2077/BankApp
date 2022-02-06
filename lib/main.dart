@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'projectList.dart';
+import 'homePage.dart';
 import 'package:postgres/postgres.dart';
 import "globals.dart" as glob;
 
@@ -35,7 +35,6 @@ class _StartPageState extends State<StartPage> {
     connection = PostgreSQLConnection("localhost", 5433, "bank",
         username: "postgres", password: "postgres");
     await connection.open();
-    print(connection.runtimeType);
   }
 
   late String error = '';
@@ -204,7 +203,7 @@ class _StartPageState extends State<StartPage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ProjectList(
+                              builder: (context) => HomePage(
                                     con: connection,
                                   )));
                     } else {

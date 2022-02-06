@@ -74,6 +74,38 @@ class _HomePageState extends State<HomePage> {
             element[3].toDouble();
       }
     }
+    glob.listTransactions = [];
+    for (var i in transactions) {
+      glob.listTransactions.add(
+        Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            decoration: BoxDecoration(
+                color: const Color.fromRGBO(243, 167, 65, 1),
+                borderRadius: BorderRadius.circular(12)),
+            height: MediaQuery.of(context).size.height / 12,
+            child: Center(
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    const TextSpan(
+                        text: 'Send artembly to ',
+                        style: TextStyle(color: Color.fromRGBO(27, 27, 27, 1))),
+                    TextSpan(
+                        text: userAccount[i[2]].toString(),
+                        style: const TextStyle(
+                            color: Color.fromRGBO(27, 27, 27, 1),
+                            fontWeight: FontWeight.bold)),
+                    TextSpan(
+                        text: ": " + form.format(i[3]) + " Ab",
+                        style: const TextStyle(
+                            color: Color.fromRGBO(27, 27, 27, 1),
+                            fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+            )),
+      );
+    }
     setState(() {
       glob.allTransaction = allTransactions;
     });
@@ -105,39 +137,51 @@ class _HomePageState extends State<HomePage> {
                 onRefresh: getTransaction,
                 child: ListView(
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          color: const Color.fromRGBO(27, 27, 27, 1),
-                          borderRadius: BorderRadius.circular(20)),
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height / 10,
-                      margin: const EdgeInsets.only(
-                        top: 10,
-                        right: 40,
-                        left: 40,
-                        bottom: 30,
-                      ),
-                      child: Center(
-                          child: Text(
-                        (account.isNotEmpty
-                                ? form.format(account[0][1])
-                                : "0") +
-                            " Ab",
-                        style: const TextStyle(
-                            color: Color.fromRGBO(243, 167, 65, 1),
-                            fontSize: 40,
-                            fontWeight: FontWeight.bold),
-                      )),
-                    ),
-                    glob.allTransaction.isNotEmpty
-                        ? PieChart(dataMap: glob.allTransaction)
-                        : SizedBox(
-                            height: MediaQuery.of(context).size.height / 3,
-                            child: const Center(
-                              child: Text("У вас нет трат"),
-                            ),
+                        Container(
+                          decoration: BoxDecoration(
+                              color: const Color.fromRGBO(27, 27, 27, 1),
+                              borderRadius: BorderRadius.circular(20)),
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height / 10,
+                          margin: const EdgeInsets.only(
+                            top: 10,
+                            right: 40,
+                            left: 40,
+                            bottom: 30,
                           ),
-                  ],
+                          child: Center(
+                              child: Text(
+                            (account.isNotEmpty
+                                    ? form.format(account[0][1])
+                                    : "0") +
+                                " Ab",
+                            style: const TextStyle(
+                                color: Color.fromRGBO(243, 167, 65, 1),
+                                fontSize: 40,
+                                fontWeight: FontWeight.bold),
+                          )),
+                        ),
+                        glob.allTransaction.isNotEmpty
+                            ? PieChart(dataMap: glob.allTransaction)
+                            : SizedBox(
+                                height: MediaQuery.of(context).size.height / 3,
+                                child: const Center(
+                                  child: Text("У вас нет трат"),
+                                ),
+                              ),
+                        Container(
+                          height: MediaQuery.of(context).size.height / 10,
+                          child: const Center(
+                              child: Text(
+                            "Your transactions",
+                            style: TextStyle(
+                                color: Color.fromRGBO(27, 27, 27, 1),
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold),
+                          )),
+                        ),
+                      ] +
+                      glob.listTransactions,
                 ),
               ),
             ),
@@ -202,6 +246,10 @@ class _HomePageState extends State<HomePage> {
                             child: ElevatedButton(
                               onPressed: () {},
                               style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(12), // <-- Radius
+                                  ),
                                   shadowColor: Colors.black,
                                   primary:
                                       const Color.fromRGBO(243, 167, 65, 1)),

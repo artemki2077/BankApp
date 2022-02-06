@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'projectList.dart';
+import 'package:postgres/postgres.dart';
 import "globals.dart" as glob;
 
 void main() {
@@ -15,22 +16,37 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'Flutter Demo',
-      home: MyHomePage(),
+      home: StartPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+class StartPage extends StatefulWidget {
+  const StartPage({Key? key}) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<StartPage> createState() => _StartPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _StartPageState extends State<StartPage> {
   bool isHidden = false;
+  var connection;
+  setConect() async {
+    connection = PostgreSQLConnection("localhost", 5433, "bank",
+        username: "postgres", password: "postgres");
+    await connection.open();
+    print(connection.runtimeType);
+  }
+
+  late String error = '';
   late String password;
   late String login;
+
+  @override
+  void initState() {
+    setConect();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -164,14 +180,38 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     )),
               ),
+              Text(
+                error,
+                style: const TextStyle(
+                  color: Colors.redAccent,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 20,
+                ),
+              ),
               Container(
                 margin:
                     const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                 child: ElevatedButton(
-                  onPressed: () {
-                    glob.login = login;
-                    glob.password = password;
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ProjectList()));
+                  onPressed: () async {
+                    List<List<dynamic>> results = await connection.query(
+                        "SELECT * from users where password = @password and login = @login",
+                        substitutionValues: {
+                          "login": login,
+                          "password": password
+                        });
+                    if (results.isNotEmpty) {
+                      glob.user = results[0];
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ProjectList(
+                                    con: connection,
+                                  )));
+                    } else {
+                      setState(() {
+                        error = 'not such user';
+                      });
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     primary: const Color.fromRGBO(27, 27, 27, 1),

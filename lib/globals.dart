@@ -1,2 +1,1 @@
-late String login;
-late String password;
+late List<dynamic> user;

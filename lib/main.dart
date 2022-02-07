@@ -208,7 +208,7 @@ class _StartPageState extends State<StartPage> {
                                   )));
                     } else {
                       setState(() {
-                        error = 'not such user';
+                        error = 'incorrect login or password';
                       });
                     }
                   },

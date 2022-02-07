@@ -1,10 +1,10 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:intl/intl.dart';
 import 'globals.dart' as glob;
+import 'project.dart';
 
 final form = NumberFormat("#,##0", "en_US");
 
@@ -130,7 +130,7 @@ class _HomePageState extends State<HomePage> {
             Container(),
             Container(
               margin:
-                  EdgeInsets.only(top: MediaQuery.of(context).size.height / 12),
+                  EdgeInsets.only(top: MediaQuery.of(context).size.height / 10),
               child: RefreshIndicator(
                 backgroundColor: const Color.fromRGBO(27, 27, 27, 1),
                 color: const Color.fromRGBO(243, 167, 65, 1),
@@ -166,7 +166,7 @@ class _HomePageState extends State<HomePage> {
                             : SizedBox(
                                 height: MediaQuery.of(context).size.height / 3,
                                 child: const Center(
-                                  child: Text("У вас нет трат"),
+                                  child: Text("You have no expenses"),
                                 ),
                               ),
                         Container(
@@ -181,7 +181,9 @@ class _HomePageState extends State<HomePage> {
                           )),
                         ),
                       ] +
-                      glob.listTransactions,
+                      (glob.listTransactions.isEmpty
+                          ? const [Center(child: Text("pass"))]
+                          : glob.listTransactions),
                 ),
               ),
             ),
@@ -244,7 +246,13 @@ class _HomePageState extends State<HomePage> {
                             margin: const EdgeInsets.symmetric(vertical: 10),
                             height: MediaQuery.of(context).size.height / 13,
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                glob.project = projectsList[index];
+                                 Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Project(con: widget.con,)));
+                              },
                               style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
                                     borderRadius:

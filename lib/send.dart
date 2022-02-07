@@ -210,7 +210,7 @@ class _SendState extends State<Send> {
                                 "Update accounts set  balance = @balance where id = @id",
                                 substitutionValues: {
                                   "id": widget.account[0][0],
-                                  "balance": accountTo[0][1] -
+                                  "balance": widget.account[0][1] -
                                       double.parse(amount).toInt()
                                 });
                             await widget.con.query(

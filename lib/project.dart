@@ -26,6 +26,7 @@ class _ProjectState extends State<Project> {
   }
 
   Future getTransaction() async {
+    getAccount();
     var transactions = [];
     var userAccount = {};
     late Map<String, double> allTransactions = {};
@@ -207,12 +208,12 @@ class _ProjectState extends State<Project> {
                   IconButton(
                     onPressed: () {
                       Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Send(
-                                              con: widget.con,
-                                              account: account,
-                                            )));
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Send(
+                                    con: widget.con,
+                                    account: account,
+                                  )));
                     },
                     icon: const Icon(
                       Icons.send,

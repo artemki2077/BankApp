@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:postgres/postgres.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'send.dart';
 import 'package:intl/intl.dart';
 import 'globals.dart' as glob;
 import 'project.dart';
@@ -198,8 +199,11 @@ class _HomePageState extends State<HomePage> {
                     height: 50,
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
+                      const Spacer(
+                        flex: 4,
+                      ),
                       const Text(
                         "Your",
                         style: TextStyle(color: Colors.white, fontSize: 30),
@@ -220,7 +224,28 @@ class _HomePageState extends State<HomePage> {
                           style: TextStyle(
                               fontSize: 15, fontWeight: FontWeight.bold),
                         )),
-                      )
+                      ),
+                      const Spacer(
+                        flex: 2,
+                      ),
+                      Container(
+                          margin: const EdgeInsets.only(right: 10),
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Send(
+                                              con: widget.con,
+                                              account: account,
+                                            )));
+                            },
+                            icon: const Icon(
+                              Icons.send,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                          )),
                     ],
                   ),
                 ],
@@ -248,10 +273,12 @@ class _HomePageState extends State<HomePage> {
                             child: ElevatedButton(
                               onPressed: () {
                                 glob.project = projectsList[index];
-                                 Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Project(con: widget.con,)));
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Project(
+                                              con: widget.con,
+                                            )));
                               },
                               style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(

@@ -18,10 +18,97 @@ class Project extends StatefulWidget {
 class _ProjectState extends State<Project> {
   var account = [];
   var projectsList = [];
+  var send = [];
+  var getFrom = [];
+  var acounsName = {};
+  late List<Widget> sendWidget = <Widget>[];
+  late List<Widget> getWidget = <Widget>[];
 
   getAccount() async {
     account = await widget.con.query("SELECT * FROM accounts where id = @id",
         substitutionValues: {"id": glob.project[3]});
+    setState(() {});
+  }
+
+  getUsers() async {
+    var transactions = [];
+    var accounts = [];
+    var usersSendSum = {};
+    var usersGetSum = {};
+
+    transactions = await widget.con.query(
+        "SELECT * FROM transactions where account_id_to = @id or account_id_from = @id ",
+        substitutionValues: {"id": glob.project[3]});
+    for (var i in transactions) {
+      if (i[1] == glob.project[3]) {
+        send.add(i);
+      } else {
+        getFrom.add(i);
+      }
+
+      if (!accounts.contains(i[1]) && i[1] != glob.project[3]) {
+        accounts.add(i[1]);
+      }
+      if (!accounts.contains(i[2]) && i[2] != glob.project[3]) {
+        accounts.add(i[2]);
+      }
+    }
+    var users = await widget.con.query(
+        "SELECT account_id, login FROM users where account_id in (${accounts.join(',')})");
+    var projects = await widget.con.query(
+        "SELECT account_id, login FROM projects where account_id in (${accounts.join(',')})");
+    for (var i in (users + projects)) {
+      if (!this.acounsName.containsKey(i[0])) {
+        this.acounsName[i[0]] = i[1];
+      }
+    }
+    for (var i in send) {
+      if (!usersSendSum.containsKey(i[2])) {
+        usersSendSum[i[2]] = i[3];
+      } else {
+        usersSendSum[i[2]] += i[3];
+      }
+    }
+    for (var i in getFrom) {
+      if (!usersGetSum.containsKey(i[1])) {
+        usersGetSum[i[1]] = i[3];
+      } else {
+        usersGetSum[i[1]] += i[3];
+      }
+    }
+    for (var i in usersGetSum.keys) {
+      this.getWidget.add(Container(
+            decoration: BoxDecoration(
+                color: const Color.fromRGBO(243, 167, 65, 1),
+                borderRadius: BorderRadius.circular(20)),
+            width: MediaQuery.of(context).size.width / 2.5,
+            height: MediaQuery.of(context).size.height / 12,
+            margin: const EdgeInsets.symmetric(vertical: 30),
+            child: Center(
+              child: Text("${this.acounsName[i]} : ${usersGetSum[i]} Ab",
+                  style: const TextStyle(
+                      color: Color.fromRGBO(27, 27, 27, 1),
+                      fontWeight: FontWeight.bold)),
+            ),
+          ));
+    }
+    for (var i in usersSendSum.keys) {
+      this.sendWidget.add(Container(
+            decoration: BoxDecoration(
+                color: const Color.fromRGBO(243, 167, 65, 1),
+                borderRadius: BorderRadius.circular(20)),
+            width: MediaQuery.of(context).size.width / 2.5,
+            height: MediaQuery.of(context).size.height / 12,
+            margin: const EdgeInsets.symmetric(vertical: 30),
+            child: Center(
+              child: Text("${this.acounsName[i]} : ${usersSendSum[i]} Ab",
+                  style: const TextStyle(
+                      color: Color.fromRGBO(27, 27, 27, 1),
+                      fontWeight: FontWeight.bold)),
+            ),
+          ));
+    }
+
     setState(() {});
   }
 
@@ -48,7 +135,7 @@ class _ProjectState extends State<Project> {
       userAccount[element[0]] = element[1];
     }
     for (var element in transactions) {
-      if (allTransactions.containsKey(userAccount[element[2]])) {
+      if (allTransactions.containsKey(userAccount[element[1]].toString())) {
         allTransactions[userAccount[element[1]].toString()] =
             allTransactions[userAccount[element[1]].toString()]! +
                 element[3].toDouble();
@@ -98,6 +185,7 @@ class _ProjectState extends State<Project> {
   @override
   void initState() {
     getAccount();
+    getUsers();
     getTransaction();
     super.initState();
   }
@@ -160,7 +248,30 @@ class _ProjectState extends State<Project> {
                   ] +
                   (glob.listTransactions.isEmpty
                       ? const [Center(child: Text("pass"))]
-                      : glob.listTransactions),
+                      : glob.listTransactions) +
+                  [
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Column(
+                      children: <Widget>[
+                            const Text(
+                              "helping",
+                              style: TextStyle(
+                                  color: Color.fromRGBO(27, 27, 27, 1),
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ] +
+                          (this.sendWidget.isNotEmpty
+                              ? this.sendWidget
+                              : [
+                                  Center(
+                                    child: Text("pass"),
+                                  )
+                                ]),
+                    ),
+                  ],
             ),
           ),
         ),

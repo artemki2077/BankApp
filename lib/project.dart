@@ -3,6 +3,7 @@ import 'globals.dart' as glob;
 import 'package:pie_chart/pie_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:postgres/postgres.dart';
+import 'send.dart';
 
 final form = NumberFormat("#,##0", "en_US");
 
@@ -176,6 +177,9 @@ class _ProjectState extends State<Project> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  const Spacer(
+                    flex: 4,
+                  ),
                   const Text(
                     "Project",
                     style: TextStyle(color: Colors.white, fontSize: 20),
@@ -196,6 +200,25 @@ class _ProjectState extends State<Project> {
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.bold),
                     )),
+                  ),
+                  const Spacer(
+                    flex: 2,
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Send(
+                                              con: widget.con,
+                                              account: account,
+                                            )));
+                    },
+                    icon: const Icon(
+                      Icons.send,
+                      color: Colors.white,
+                      size: 30,
+                    ),
                   )
                 ],
               ),

@@ -99,7 +99,7 @@ class _ProjectState extends State<Project> {
                 borderRadius: BorderRadius.circular(20)),
             width: MediaQuery.of(context).size.width / 2.5,
             height: MediaQuery.of(context).size.height / 12,
-            margin: const EdgeInsets.symmetric(vertical: 30),
+            margin: const EdgeInsets.only(top: 20),
             child: Center(
               child: Text("${this.acounsName[i]} : ${usersSendSum[i]} Ab",
                   style: const TextStyle(
@@ -127,10 +127,14 @@ class _ProjectState extends State<Project> {
         accountsList.add(element[1]);
       }
     }
-    var users = await widget.con.query(
-        "SELECT account_id, login FROM users where account_id in (${accountsList.join(',')})");
-    var projects = await widget.con.query(
-        "SELECT account_id, login FROM projects where account_id in (${accountsList.join(',')})");
+    var users = [];
+    var projects = [];
+    if (accountsList.isNotEmpty) {
+      users = await widget.con.query(
+          "SELECT account_id, login FROM users where account_id in (${accountsList.join(',')})");
+      projects = await widget.con.query(
+          "SELECT account_id, login FROM projects where account_id in (${accountsList.join(',')})");
+    }
     for (var element in (users + projects)) {
       userAccount[element[0]] = element[1];
     }
@@ -184,6 +188,9 @@ class _ProjectState extends State<Project> {
 
   @override
   void initState() {
+    glob.allTransaction = {};
+    glob.listTransactions = [];
+    this.sendWidget = [];
     getAccount();
     getUsers();
     getTransaction();

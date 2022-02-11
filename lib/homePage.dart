@@ -39,12 +39,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   getAccount() async {
-    account = await widget.con.query("SELECT * FROM accounts where id = @id",
+    this.account = await widget.con.query(
+        "SELECT * FROM accounts where id = @id",
         substitutionValues: {"id": glob.user[3]});
     setState(() {});
   }
 
   Future getTransaction() async {
+    getAccount();
     var transactions = [];
     var userAccount = {};
     late Map<String, double> allTransactions = {};
@@ -110,11 +112,13 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       glob.allTransaction = allTransactions;
     });
-    return allTransactions;
+    return glob.allTransaction;
   }
 
   @override
   void initState() {
+    glob.allTransaction = {};
+    glob.listTransactions = [];
     getAccount();
     getProjects();
     getTransaction();
@@ -152,8 +156,8 @@ class _HomePageState extends State<HomePage> {
                           ),
                           child: Center(
                               child: Text(
-                            (account.isNotEmpty
-                                    ? form.format(account[0][1])
+                            (this.account.isNotEmpty
+                                    ? form.format(this.account[0][1])
                                     : "0") +
                                 " Ab",
                             style: const TextStyle(
@@ -233,12 +237,12 @@ class _HomePageState extends State<HomePage> {
                           child: IconButton(
                             onPressed: () {
                               Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Send(
-                                              con: widget.con,
-                                              account: account,
-                                            )));
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Send(
+                                            con: widget.con,
+                                            account: account,
+                                          )));
                             },
                             icon: const Icon(
                               Icons.send,

@@ -24,7 +24,7 @@ class _SendState extends State<Send> {
 
   late String login;
   late String amount;
-  late String comment;
+  late String comment = '';
 
   var nameError;
   var amountError;
